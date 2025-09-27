@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkmat Escola de Jiu-Jitsu</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<header>
+<img src="img/logo-checkmat.png" alt="Logo Checkmat">
+<nav>
+<ul>
+<li><a href="#inicio">Início</a></li>
+<li><a href="#sobre">Sobre</a></li>
+<li><a href="#inscricao">Inscrição</a></li>
+<li><a href="#contato">Contato</a></li>
+<li><a href="#admin">Admin</a></li>
+</ul>
+</nav>
+</header>
+
+<div class="hero" id="inicio" style="background-image: url('img/fundo-luta.jpg'); background-size: cover; background-position: center; color: white;">
+<div class="hero-overlay">
+<h1>Checkmat Escola de Jiu-Jitsu</h1>
+<p>Mestre Eliseu Pereira</p>
+<img src="img/mestre-eliseu.png" alt="Mestre Eliseu Pereira" class="mestre-img">
+</div>
+</div>
+
+<section id="sobre" class="sobre">
+<img src="img/jiujitsu-acao.jpg" alt="Jiu-Jitsu em ação" class="sobre-img">
+<div>
+<h2>A Importância do Jiu-Jitsu</h2>
+<p>O Jiu-Jitsu é muito mais que uma arte marcial. Ele desenvolve disciplina, autocontrole, respeito e confiança, além de promover condicionamento físico e saúde mental. Para crianças, é uma ferramenta poderosa na formação de caráter e socialização. Para adultos, é uma prática de superação e equilíbrio, essencial para o bem-estar e qualidade de vida.</p>
+</div>
+</section>
+
+<section id="inscricao">
+<h2>Inscrições e Valores</h2>
+<div class="inscricao">
+<div class="card">
+<i class="fa-solid fa-child fa-2x"></i>
+<h3>Kids</h3>
+<p>R$ 70</p>
+</div>
+<div class="card">
+<i class="fa-solid fa-user-ninja fa-2x"></i>
+<h3>Adulto</h3>
+<p>R$ 100</p>
+</div>
+</div>
+<p style="text-align:center; margin-top:20px; font-weight:bold;">A mensalidade vence todo dia 05 de cada mês.</p>
+
+<form id="formInscricao" class="formulario">
+<input type="text" id="nome" placeholder="Nome do aluno" required>
+<label>Data de Nascimento:</label>
+<input type="date" id="dataNascimento" required>
+<input type="tel" id="telefone" placeholder="Telefone" required>
+<input type="email" id="email" placeholder="E-mail" required>
+<select id="plano" required>
+<option value="">Selecione o plano</option>
+<option value="Kids">Kids - R$70</option>
+<option value="Adulto">Adulto - R$100</option>
+</select>
+<button type="submit">Enviar Inscrição</button>
+</form>
+
+<div id="avisoAniversario" class="aviso"></div>
+</section>
+
+<section id="contato">
+<h2>contato</h2>
+<h2>71996910719</h2>
+<p style="text-align:center;">Entre em contato pelo WhatsApp ou visite nossa unidade para mais informações.</p>
+</section>
+
+<section id="admin">
+<h2>Painel Administrativo</h2>
+<p style="text-align:center;">Lista de alunos inscritos:</p>
+<table border="1" cellpadding="10" cellspacing="0" class="tabela-alunos">
+<thead>
+<tr>
+<th>Nome</th>
+<th>Data de Nascimento</th>
+<th>Telefone</th>
+<th>Email</th>
+<th>Plano</th>
+</tr>
+</thead>
+<tbody id="tabelaAlunos"></tbody>
+</table>
+</section>
+
+<footer>
+<p>&copy; 2025 Checkmat Escola de Jiu-Jitsu - Todos os direitos reservados</p>
+</footer>
+
+<script>
+const form = document.getElementById('formInscricao');
+const tabela = document.getElementById('tabelaAlunos');
+
+function carregarAlunos() {
+const alunos = JSON.parse(localStorage.getItem('alunos')) || [];
+tabela.innerHTML = '';
+alunos.forEach(a => {
+const tr = document.createElement('tr');
+tr.innerHTML = `<td>${a.nome}</td><td>${a.dataNascimento}</td><td>${a.telefone}</td><td>${a.email}</td><td>${a.plano}</td>`;
+tabela.appendChild(tr);
+});
+}
+
+form.addEventListener('submit', (e) => {
+e.preventDefault();
+const aluno = {
+nome: document.getElementById('nome').value,
+dataNascimento: document.getElementById('dataNascimento').value,
+telefone: document.getElementById('telefone').value,
+email: document.getElementById('email').value,
+plano: document.getElementById('plano').value
+};
+const alunos = JSON.parse(localStorage.getItem('alunos')) || [];
+alunos.push(aluno);
+localStorage.setItem('alunos', JSON.stringify(alunos));
+carregarAlunos();
+form.reset();
+alert("Inscrição realizada com sucesso!");
+});
+
+function verificarAniversarios() {
+const alunos = JSON.parse(localStorage.getItem('alunos')) || [];
+const hoje = new Date();
+const dia = String(hoje.getDate()).padStart(2, '0');
+const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+
+const aniversariantes = alunos.filter(a => {
+const [ano, m, d] = a.dataNascimento.split('-');
+return d === dia && m === mes;
+});
+
+if (aniversariantes.length > 0) {
+document.getElementById('avisoAniversario').innerText =
+"🎉 Hoje é aniversário de: " + aniversariantes.map(a => a.nome).join(', ');
+}
+}
+
+carregarAlunos();
+verificarAniversarios();
+</script>
+</body>
+</html>
